@@ -1,52 +1,3 @@
-// import axios from 'axios'
-// import React, { useState } from 'react'
-// import { Link, useNavigate } from 'react-router-dom';
-
-// const Signup = () => {
-//     const navigate = useNavigate();
-//     const [newUser, setNewUser] = useState({
-//       name: "",
-//       username: "",
-//       email: "",
-//       password: "",
-//     //   confirmPassword: "",
-//     })
-
-//     const signUp = async () =>{
-//     try{
-//         const res = await axios.post("/api/auth/sign-up",newUser);
-//         //  const res = await axios.post("https://fakestoreapi.com/users",newUser);
-
-//         console.log(res.status)
-//         alert("ugurlu emeliyyat......");
-//         navigate("/")
-//         sessionStorage.setItem("user",JSON.stringify(res.data))
-//     } catch(error) {
-//         console.error("Login error:", error);
-//     }
-//     }
-
-//     const onHandleChange = (e) =>{
-//         setNewUser({...newUser, [e.target.name]: e.target.value})
-//         console.log(e.target.value)
-//     }
-//   return (
-//     <div>
-//       <input type="text" name='name' onChange={onHandleChange}/>
-//       <input type="text" name='username' onChange={onHandleChange}/>
-//       <input type="text" name='email' onChange={onHandleChange}/>
-//       <input type="password" name='password' onChange={onHandleChange}/>
-//       {/* <input type="password" name='password' onChange={onHandleChange}/> */}
-//       <button onClick={signUp}>SignUp</button>
-//         <li>
-//         <Link to="/">Login</Link>
-//       </li>
-//     </div>
-//   )
-// }
-
-// export default Signup
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -101,7 +52,7 @@ const Signup = () => {
 
       login(user, token, expiresAt);
       setAuthStatus(STATUS.SUCCEEDED);
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       alert(error.response?.data?.error?.message || "Signup error");
       setAuthStatus(STATUS.FAILED);
@@ -201,7 +152,7 @@ const Signup = () => {
 
           <p className="text-center text-sm mt-4">
             Already have an account?{" "}
-            <Link to="/" className="text-blue-600 hover:underline">
+            <Link to="/login" className="text-blue-600 hover:underline">
               Login
             </Link>
           </p>

@@ -1,44 +1,17 @@
-// import { useEffect, useState } from "react";
-// import { Route, Routes, Navigate } from "react-router-dom";
-// import Home from "./pages/Home";
-// import Login from "./pages/Login";
-// import Users from "./pages/Users";
-// import Navbar from "./components/Navbar";
-// import Signup from "./pages/Signup";
-
-// function App() {
-//    const [user, setUser] = useState(null);
-//    useEffect(()=>{
-//    const token = sessionStorage.getItem("token") 
-//    setUser(token)
-//    },[user])
-//   return (
-//     <div className="App">
-//       {/* <Navbar/> */}
-//       <Routes>
-//         <Route path="/sign-up" element={<Signup />} />
-//         <Route path="/" element={user ? <Navigate to="/home"/>:<Login setUser={setUser} />} />
-//         <Route path="/home" element={user ? <Home setUser={setUser}/> : <Navigate to="/" />} />
-//         <Route path="/users" element={<Users />} />
-//       </Routes>
-//     </div>
-//   );
-// }
-
-// export default App;
-
-import { useEffect, useState } from "react";
-import { Route, Routes, Navigate, createBrowserRouter } from "react-router-dom";
+import { useEffect} from "react";
+import { Route, Routes, Navigate, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Users from "./pages/Users";
-import Navbar from "./components/Navbar";
+import Users from "./pages/Users/Users";
 import Signup from "./pages/Signup";
 import { useAuth } from "./hooks/useAuth";
 import useRefreshToken from "./hooks/useRefreshToken";
+import Layout from "./components/Layout";
+import { STATUS } from "./utils/utils";
+import Loading from "./components/Loading";
 
 function App() {
-  const [user, setUser] = useState(null);
   const { isAuthenticated, expiresAt } = useAuth();
 
   const refreshAccessToken = useRefreshToken();
@@ -64,29 +37,96 @@ function App() {
     };
   }, [expiresAt, isAuthenticated, refreshAccessToken]);
 
+  // const router = createBrowserRouter([
+  //   {
+  //     element: <Layout/>,
+  //     children: [
+  //       {
+  //         path: "/",
+  //         element: (
+  //           <OnlyLoggedIn redirectTo="/login">
+  //             <Home/>
+  //           </OnlyLoggedIn>
+  //         )
+  //       },
+  //     {
+  //         path: "login",
+  //         element: (
+  //           <OnlyGuests redirectTo="/">
+  //             <Login/>
+  //           </OnlyGuests>
+  //         )
+  //       },
+  //       {
+  //         path: "sign-up",
+  //         element: (
+  //           <OnlyGuests redirectTo="/">
+  //             <Signup/>
+  //           </OnlyGuests>
+  //         )
+  //       },
+  //       {
+  //         path: "users",
+  //         element: (
+  //           <OnlyLoggedIn redirectTo="/login">
+  //             <Users/>
+  //           </OnlyLoggedIn>
+  //         )
+  //       },
+  //     ]
+  //   }
+  // ])
 
-  // useEffect(() => {
-  //   const token = sessionStorage.getItem("token");
-  //   setUser(token);
-  // }, []);
+  // return (
+  //   <div className="App">
+  //     <RouterProvider router={router} />
 
-  const router = createBrowserRouter([
-    {
-      element
-    }
-  ])
-
-  return (
-    <div className="App">
-      {user && <Navbar />}
-      <Routes>
-        <Route path="/sign-up" element={<Signup />} />
-        <Route path="/" element={user ? <Navigate to="/home" /> : <Login setUser={setUser} />} />
-        <Route path="/home" element={user ? <Home setUser={setUser} /> : <Navigate to="/" />} />
-        <Route path="/users" element={<Users />} />
-      </Routes>
-    </div>
+  //   </div>
+  // );
+    return (
+      <div className="App">
+<Layout/>
+    <Routes>
+      <Route path="/" element={<OnlyLoggedIn redirectTo="/sign-up"><Home/></OnlyLoggedIn>} />
+      <Route path="/sign-up" element={<OnlyGuests redirectTo="/"><Signup/></OnlyGuests>} />
+      <Route path="/login" element={<OnlyGuests redirectTo="/"><Login/></OnlyGuests>} />
+      <Route path="/users" element={<OnlyLoggedIn redirectTo="/login"><Users/></OnlyLoggedIn>} />
+    </Routes>
+      </div>
   );
 }
+const OnlyLoggedIn = ({ children, redirectTo })=>{
+const { isAuthenticated,status } = useAuth();
+const location = useLocation();
+
+if(status === STATUS.PENDING) return <Loading/>
+
+return isAuthenticated ? (
+  children
+) : (
+  <Navigate to={redirectTo} state={{from:location}}/>
+)
+}
+
+const OnlyGuests = ({children, redirectTo}) => {
+const { isAuthenticated,status } = useAuth();
+const location = useLocation();
+
+if(status === STATUS.PENDING) return <Loading/>
+
+return isAuthenticated ? (
+   <Navigate to={location.state?.from?.pathname || redirectTo} />
+) : (
+  children
+);
+};
+OnlyLoggedIn.propTypes = {
+  children: PropTypes.element.isRequired,
+  redirectTo: PropTypes.string.isRequired,
+};
+OnlyGuests.propTypes = {
+  children: PropTypes.element.isRequired,
+  redirectTo: PropTypes.string.isRequired,
+};
 
 export default App;

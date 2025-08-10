@@ -1,75 +1,88 @@
-// import React from 'react'
-// import { Link } from 'react-router-dom'
-
-// const Navbar = () => {
-//   return (
-//     <div>
-//       <ul>
-//          <li>
-//             <Link to="/home">Home</Link>
-//           </li>
-//           <li>
-//             <Link to="/users">Users</Link>
-//           </li>
-//           {/* <li>
-//             <Link to="/login">Login</Link>
-//           </li> */}
-//       </ul>
-//     </div>
-//   )
-// }
-
-// export default Navbar
-
-
-import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from '../hooks/useAuth';
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector} from "react-redux";
 
 const Navbar = () => {
-const dispatch = useDispatch();
 const navigate = useNavigate();
 const { logout } = useAuth()
 const { isAuthenticated, token } = useSelector((state) => state.auth);
 
 const logoutHandler = async () => {
     try {
-      await axios.post
+      await axios.post(
+        "/api/auth/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      logout();
+      navigate('/login');
     } catch (error) {
-      
+      console.log("Something went wrong.", error);
     }
 }
 
   return (
-    <nav className="bg-blue-600 p-4 shadow-md">
-      <ul className="flex gap-6 text-white text-lg font-medium">
-        <li>
+  <nav className="bg-blue-600 p-4 shadow-md">
+      <div className="container mx-auto flex justify-between items-center">
+        {/* Logo və ya Home linki */}
+        <div>
           <Link
-            to="/home"
-            className="hover:text-yellow-300 transition duration-200"
+            to="/"
+            className="text-white text-xl font-bold hover:text-yellow-300 transition duration-200"
           >
             Home
           </Link>
-        </li>
-        <li>
-          <Link
-            to="/users"
-            className="hover:text-yellow-300 transition duration-200"
-          >
-            Users
-          </Link>
-        </li>
-        {/* <li>
-          <Link
-            to="/login"
-            className="hover:text-yellow-300 transition duration-200"
-          >
-            Login
-          </Link>
-        </li> */}
-      </ul>
+        </div>
+
+        {/* Menyu */}
+        <ul className="flex gap-6 text-white text-lg font-medium">
+          {!isAuthenticated ? (
+            <>
+              <li>
+                <Link
+                  to="/sign-up"
+                  className="hover:text-yellow-300 transition duration-200"
+                >
+                  Sign Up
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/login"
+                  className="hover:text-yellow-300 transition duration-200"
+                >
+                  Login
+                </Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link
+                  to="/users"
+                  className="hover:text-yellow-300 transition duration-200"
+                >
+                  Users
+                </Link>
+              </li>
+              {/* Əlavə olaraq Logout və ya Profile də əlavə edə bilərsən */}
+              <li>
+                <button
+                  onClick={logoutHandler}
+                  className="hover:text-yellow-300 transition duration-200"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
     </nav>
   );
 };
