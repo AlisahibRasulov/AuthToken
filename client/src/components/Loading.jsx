@@ -1,15 +1,11 @@
-import React from 'react'
-
+import React from "react";
+import { PulseLoader } from "react-spinners";
 const Loading = () => {
   return (
-     <div>
-      <div>
-        <div>
-            ...Loading
-        </div>
-      </div>
+    <div className="w-full flex justify-center items-center">
+      <PulseLoader color="#2563eb" loading speedMultiplier={1} />
     </div>
-  )
-}
+  );
+};
 
-export default Loading
+export default Loading;

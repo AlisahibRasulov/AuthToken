@@ -1,12 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from '../hooks/useAuth';
-import { useSelector} from "react-redux";
+import { useAuth } from "../contexts/auth-context";
 
 const Navbar = () => {
 const navigate = useNavigate();
-const { logout } = useAuth()
-const { isAuthenticated, token } = useSelector((state) => state.auth);
+const { isAuthenticated, token,logout } = useAuth()
 
 const logoutHandler = async () => {
     try {

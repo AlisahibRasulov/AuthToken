@@ -46,15 +46,15 @@
 
 // export default Login;
 
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-
-import { useAuth } from "../hooks/useAuth";
 import { STATUS } from "../utils/utils";
+import { useAuth } from "../contexts/auth-context";
+import toast from "react-hot-toast";
 
-const Login = ({setUser}) => {
+
+const Login = ({ setUser }) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -63,15 +63,15 @@ const Login = ({setUser}) => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const { login, setAuthStatus } = useAuth();
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.username.trim()) newErrors.username = "This field is required.";
+    if (!formData.username.trim())
+      newErrors.username = "This field is required.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
     return newErrors;
   };
@@ -91,10 +91,12 @@ const Login = ({setUser}) => {
       login(user, token, expiresAt);
       setAuthStatus(STATUS.SUCCEEDED);
       navigate("/home");
-      setUser(true);
-    } catch (err) {
-      setAuthStatus(STATUS.FAILED);
-      alert(err.response?.data?.error?.message || "Login failed");
+      toast.success('Uğurlu əməliyyat!');
+
+    } catch (error) {
+      setAuthStatus(STATUS.PENDING);
+      toast.error(error.response.data.error.message);   
+      setAuthStatus(STATUS.FAILED);  
     }
   };
 
@@ -103,8 +105,6 @@ const Login = ({setUser}) => {
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
         <form onSubmit={handleSubmit}>
-
-          {/* Username */}
           <div className="mb-4">
             <input
               type="text"
@@ -119,7 +119,6 @@ const Login = ({setUser}) => {
             )}
           </div>
 
-          {/* Password */}
           <div className="mb-4">
             <input
               type="password"
@@ -134,7 +133,6 @@ const Login = ({setUser}) => {
             )}
           </div>
 
-          {/* Submit Button */}
           <div className="mb-4">
             <button
               type="submit"

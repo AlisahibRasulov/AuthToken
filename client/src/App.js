@@ -1,15 +1,16 @@
 import { useEffect} from "react";
-import { Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, RouterProvider, createBrowserRouter } from "react-router-dom";
 import PropTypes from "prop-types";
+import { Toaster } from 'react-hot-toast';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Users from "./pages/Users/Users";
 import Signup from "./pages/Signup";
-import { useAuth } from "./hooks/useAuth";
 import useRefreshToken from "./hooks/useRefreshToken";
 import Layout from "./components/Layout";
 import { STATUS } from "./utils/utils";
 import Loading from "./components/Loading";
+import { useAuth } from "./contexts/auth-context";
 
 function App() {
   const { isAuthenticated, expiresAt } = useAuth();
@@ -37,76 +38,65 @@ function App() {
     };
   }, [expiresAt, isAuthenticated, refreshAccessToken]);
 
-  // const router = createBrowserRouter([
-  //   {
-  //     element: <Layout/>,
-  //     children: [
-  //       {
-  //         path: "/",
-  //         element: (
-  //           <OnlyLoggedIn redirectTo="/login">
-  //             <Home/>
-  //           </OnlyLoggedIn>
-  //         )
-  //       },
-  //     {
-  //         path: "login",
-  //         element: (
-  //           <OnlyGuests redirectTo="/">
-  //             <Login/>
-  //           </OnlyGuests>
-  //         )
-  //       },
-  //       {
-  //         path: "sign-up",
-  //         element: (
-  //           <OnlyGuests redirectTo="/">
-  //             <Signup/>
-  //           </OnlyGuests>
-  //         )
-  //       },
-  //       {
-  //         path: "users",
-  //         element: (
-  //           <OnlyLoggedIn redirectTo="/login">
-  //             <Users/>
-  //           </OnlyLoggedIn>
-  //         )
-  //       },
-  //     ]
-  //   }
-  // ])
+  const router = createBrowserRouter([
+    {
+      element: <Layout/>,
+      children: [
+        {
+          path: "/",
+          element: (
+            <OnlyLoggedIn redirectTo="/login">
+              <Home/>
+            </OnlyLoggedIn>
+          )
+        },
+      {
+          path: "login",
+          element: (
+            <OnlyGuests redirectTo="/">
+              <Login/>
+            </OnlyGuests>
+          )
+        },
+        {
+          path: "sign-up",
+          element: (
+            <OnlyGuests redirectTo="/">
+              <Signup/>
+            </OnlyGuests>
+          )
+        },
+        {
+          path: "users",
+          element: (
+            <OnlyLoggedIn redirectTo="/login">
+              <Users/>
+            </OnlyLoggedIn>
+          )
+        },
+      ]
+    }
+  ])
 
-  // return (
-  //   <div className="App">
-  //     <RouterProvider router={router} />
-
-  //   </div>
-  // );
-    return (
-      <div className="App">
-<Layout/>
-    <Routes>
-      <Route path="/" element={<OnlyLoggedIn redirectTo="/sign-up"><Home/></OnlyLoggedIn>} />
-      <Route path="/sign-up" element={<OnlyGuests redirectTo="/"><Signup/></OnlyGuests>} />
-      <Route path="/login" element={<OnlyGuests redirectTo="/"><Login/></OnlyGuests>} />
-      <Route path="/users" element={<OnlyLoggedIn redirectTo="/login"><Users/></OnlyLoggedIn>} />
-    </Routes>
-      </div>
+  return (
+    <div className="App">
+      <RouterProvider router={router} />
+       <Toaster />
+    </div>
   );
 }
 const OnlyLoggedIn = ({ children, redirectTo })=>{
 const { isAuthenticated,status } = useAuth();
 const location = useLocation();
 
-if(status === STATUS.PENDING) return <Loading/>
+if(status === STATUS.PENDING) return <Loading/>;
 
 return isAuthenticated ? (
   children
 ) : (
   <Navigate to={redirectTo} state={{from:location}}/>
-)
-}
+);
+};
 
 const OnlyGuests = ({children, redirectTo}) => {
 const { isAuthenticated,status } = useAuth();
