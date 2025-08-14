@@ -1,60 +1,11 @@
-// import React, { useState } from "react";
-// import axios from "axios";
-// import { Link, useNavigate } from "react-router-dom";
-
-// const Login = ({setUser}) => {
-//   const navigate = useNavigate();
-//   const [loginData, setLoginData] = useState({
-//     username: "",
-//     password: "",
-//   });
-
-//   const login = async () => {
-//     try {
-//       // const res = await axios.post("http://localhost:3009/login", loginData);
-//       const res = await axios.post("/api/auth/login", loginData);
-//       // const res = await axios.post("https://fakestoreapi.com/auth/login", loginData);
-//       console.log(res)
-//       // alert("her sey bombadi qaqa!");
-//       if(res.status == 200){
-//         navigate("/home");
-//         setUser(true)
-//         alert("ugurlu emeliyyat");
-//         sessionStorage.getItem("user")
-//       }
-//       sessionStorage.setItem("token",res.data.token)
-//     } catch (error) {
-//       console.error("Login error:", error);
-//       alert("istifadeci adi ve ya sifre yanlishdir")
-//     }
-//   };
-//   const onHandleChange = (e) => {
-//     setLoginData({ ...loginData, [e.target.name]: e.target.value });
-//   };
-//   return (
-//     <div>
-//       <h1>Login</h1>
-//       <input type="text" name="username" onChange={onHandleChange} />
-//       <input type="password" name="password" onChange={onHandleChange} />
-//       <button onClick={login}>Login</button>
-//       <li>
-//         <Link to="/sign-up">SignUp</Link>
-//       </li>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-
 import { useAuth } from "../hooks/useAuth";
 import { STATUS } from "../utils/utils";
+import toast from "react-hot-toast";
 
-const Login = ({setUser}) => {
+const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -91,10 +42,10 @@ const Login = ({setUser}) => {
       login(user, token, expiresAt);
       setAuthStatus(STATUS.SUCCEEDED);
       navigate("/home");
-      setUser(true);
-    } catch (err) {
+      toast.success('Uğurlu əməliyyat!');
+    } catch (error) {
       setAuthStatus(STATUS.FAILED);
-      alert(err.response?.data?.error?.message || "Login failed");
+      toast.error(error.response?.data?.error?.message);
     }
   };
 
@@ -104,7 +55,6 @@ const Login = ({setUser}) => {
         <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
         <form onSubmit={handleSubmit}>
 
-          {/* Username */}
           <div className="mb-4">
             <input
               type="text"
@@ -119,7 +69,6 @@ const Login = ({setUser}) => {
             )}
           </div>
 
-          {/* Password */}
           <div className="mb-4">
             <input
               type="password"
@@ -134,7 +83,6 @@ const Login = ({setUser}) => {
             )}
           </div>
 
-          {/* Submit Button */}
           <div className="mb-4">
             <button
               type="submit"

@@ -1,14 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from '../hooks/useAuth';
-import { useSelector} from "react-redux";
+import { useAuth } from "../hooks/useAuth";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-const navigate = useNavigate();
-const { logout } = useAuth()
-const { isAuthenticated, token } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { isAuthenticated, token } = useSelector((state) => state.auth);
 
-const logoutHandler = async () => {
+  const logoutHandler = async () => {
     try {
       await axios.post(
         "/api/auth/logout",
@@ -20,14 +20,14 @@ const logoutHandler = async () => {
         }
       );
       logout();
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       console.log("Something went wrong.", error);
     }
-}
+  };
 
   return (
-  <nav className="bg-blue-600 p-4 shadow-md">
+    <nav className="bg-blue-600 p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo və ya Home linki */}
         <div>

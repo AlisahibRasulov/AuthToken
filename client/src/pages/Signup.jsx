@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
 import { useAuth } from "../hooks/useAuth";
 import { STATUS } from "../utils/utils";
-// import { setAuthStatus } from "../redux/authSlice";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -29,8 +28,10 @@ const Signup = () => {
     if (!formData.name.trim()) newErrors.name = "Name is required.";
     if (formData.name.length < 2) newErrors.name = "Minimum 2 characters.";
     if (!formData.username.trim()) newErrors.username = "Username is required.";
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) newErrors.email = "Invalid email.";
-    if (formData.password.length < 6) newErrors.password = "Minimum 6 characters.";
+    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
+      newErrors.email = "Invalid email.";
+    if (formData.password.length < 6)
+      newErrors.password = "Minimum 6 characters.";
     if (formData.confirmPassword !== formData.password)
       newErrors.confirmPassword = "Passwords do not match.";
     return newErrors;
@@ -54,7 +55,7 @@ const Signup = () => {
       setAuthStatus(STATUS.SUCCEEDED);
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data?.error?.message || "Signup error");
+      toast.er(error.response?.data?.error?.message);
       setAuthStatus(STATUS.FAILED);
     }
   };
@@ -66,7 +67,7 @@ const Signup = () => {
           Create New Account
         </h1>
         <form onSubmit={onSubmit} className="space-y-4">
-          {/* Name */}
+
           <div>
             <input
               type="text"
@@ -81,7 +82,6 @@ const Signup = () => {
             )}
           </div>
 
-          {/* Username */}
           <div>
             <input
               type="text"
@@ -96,7 +96,6 @@ const Signup = () => {
             )}
           </div>
 
-          {/* Email */}
           <div>
             <input
               type="email"
@@ -111,7 +110,6 @@ const Signup = () => {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <input
               type="password"
@@ -126,7 +124,6 @@ const Signup = () => {
             )}
           </div>
 
-          {/* Confirm Password */}
           <div>
             <input
               type="password"
