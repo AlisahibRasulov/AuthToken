@@ -1,7 +1,12 @@
-import { useEffect} from "react";
-import { Navigate, useLocation, RouterProvider, createBrowserRouter } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  Navigate,
+  useLocation,
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
 import PropTypes from "prop-types";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Users from "./pages/Users/Users";
@@ -17,7 +22,6 @@ function App() {
 
   const refreshAccessToken = useRefreshToken();
 
-   
   useEffect(() => {
     refreshAccessToken();
   }, [refreshAccessToken]);
@@ -40,75 +44,83 @@ function App() {
 
   const router = createBrowserRouter([
     {
-      element: <Layout/>,
+      element: <Layout />,
       children: [
         {
           path: "/",
           element: (
             <OnlyLoggedIn redirectTo="/login">
-              <Home/>
+              <Home />
             </OnlyLoggedIn>
-          )
+          ),
         },
-      {
+        {
+          path: "/",
+          element: (
+            <OnlyLoggedIn redirectTo="/sign-up">
+              <Home />
+            </OnlyLoggedIn>
+          ),
+        },
+        {
           path: "login",
           element: (
             <OnlyGuests redirectTo="/">
-              <Login/>
+              <Login />
             </OnlyGuests>
-          )
+          ),
         },
         {
           path: "sign-up",
           element: (
             <OnlyGuests redirectTo="/">
-              <Signup/>
+              <Signup />
             </OnlyGuests>
-          )
+          ),
         },
         {
           path: "users",
           element: (
             <OnlyLoggedIn redirectTo="/login">
-              <Users/>
+              <Users />
             </OnlyLoggedIn>
-          )
+          ),
         },
-      ]
-    }
-  ])
+      ],
+    },
+  ]);
 
   return (
     <div className="App">
       <RouterProvider router={router} />
-       <Toaster />
+      <Toaster />
     </div>
   );
 }
-const OnlyLoggedIn = ({ children, redirectTo })=>{
-const { isAuthenticated,status } = useAuth();
-const location = useLocation();
+const OnlyLoggedIn = ({ children, redirectTo }) => {
+  const { isAuthenticated, status } = useAuth();
+  const location = useLocation();
 
-if(status === STATUS.PENDING) return <Loading/>;
+  if (status === STATUS.PENDING) return <Loading />;
 
-return isAuthenticated ? (
-  children
-) : (
-  <Navigate to={redirectTo} state={{from:location}}/>
-);
+  return isAuthenticated ? (
+    children
+  ) : (
+    <Navigate to={redirectTo} state={{ from: location }} />
+  );
 };
 
-const OnlyGuests = ({children, redirectTo}) => {
-const { isAuthenticated,status } = useAuth();
-const location = useLocation();
+const OnlyGuests = ({ children, redirectTo }) => {
+  const { isAuthenticated, status } = useAuth();
+  const location = useLocation();
 
-if(status === STATUS.PENDING) return <Loading/>
+  if (status === STATUS.PENDING) return <Loading />;
 
-return isAuthenticated ? (
-   <Navigate to={location.state?.from?.pathname || redirectTo} />
-) : (
-  children
-);
+  return isAuthenticated ? (
+    <Navigate to={location.state?.from?.pathname || redirectTo} />
+  ) : (
+    children
+  );
 };
 OnlyLoggedIn.propTypes = {
   children: PropTypes.element.isRequired,

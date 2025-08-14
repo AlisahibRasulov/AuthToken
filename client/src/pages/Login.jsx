@@ -1,51 +1,3 @@
-// import React, { useState } from "react";
-// import axios from "axios";
-// import { Link, useNavigate } from "react-router-dom";
-
-// const Login = ({setUser}) => {
-//   const navigate = useNavigate();
-//   const [loginData, setLoginData] = useState({
-//     username: "",
-//     password: "",
-//   });
-
-//   const login = async () => {
-//     try {
-//       // const res = await axios.post("http://localhost:3009/login", loginData);
-//       const res = await axios.post("/api/auth/login", loginData);
-//       // const res = await axios.post("https://fakestoreapi.com/auth/login", loginData);
-//       console.log(res)
-//       // alert("her sey bombadi qaqa!");
-//       if(res.status == 200){
-//         navigate("/home");
-//         setUser(true)
-//         alert("ugurlu emeliyyat");
-//         sessionStorage.getItem("user")
-//       }
-//       sessionStorage.setItem("token",res.data.token)
-//     } catch (error) {
-//       console.error("Login error:", error);
-//       alert("istifadeci adi ve ya sifre yanlishdir")
-//     }
-//   };
-//   const onHandleChange = (e) => {
-//     setLoginData({ ...loginData, [e.target.name]: e.target.value });
-//   };
-//   return (
-//     <div>
-//       <h1>Login</h1>
-//       <input type="text" name="username" onChange={onHandleChange} />
-//       <input type="password" name="password" onChange={onHandleChange} />
-//       <button onClick={login}>Login</button>
-//       <li>
-//         <Link to="/sign-up">SignUp</Link>
-//       </li>
-//     </div>
-//   );
-// };
-
-// export default Login;
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -53,8 +5,7 @@ import { STATUS } from "../utils/utils";
 import { useAuth } from "../contexts/auth-context";
 import toast from "react-hot-toast";
 
-
-const Login = ({ setUser }) => {
+const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -91,12 +42,11 @@ const Login = ({ setUser }) => {
       login(user, token, expiresAt);
       setAuthStatus(STATUS.SUCCEEDED);
       navigate("/home");
-      toast.success('Uğurlu əməliyyat!');
-
+      toast.success("Uğurlu əməliyyat!");
     } catch (error) {
       setAuthStatus(STATUS.PENDING);
-      toast.error(error.response.data.error.message);   
-      setAuthStatus(STATUS.FAILED);  
+      toast.error(error.response.data.error.message);
+      setAuthStatus(STATUS.FAILED);
     }
   };
 
